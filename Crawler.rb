@@ -12,11 +12,11 @@ class Crawler
 
   def crawl(url)
     raw_content = open(url,'User-Agent'=> @user_agent, &:read)
-    Page.new url: url, content: crawl_content(raw_content),
-      links: crawl_links(url, raw_content)
+    Page.new url: url, content: get_content(raw_content),
+      links: get_links(url, raw_content), title: get_title(raw_content)
   end
 
-  def crawl_content(content)
+  def get_content(content)
     string_content = []
 
     Nokogiri::HTML(content, 'utf-8').traverse  do |node|
@@ -28,11 +28,15 @@ class Crawler
     string_content
   end
 
-  def crawl_links(url, content)
+  def get_links(url, content)
     Nokogiri::HTML(content, 'utf-8').css('a').map do |node|
       link =  node['href'].to_s
       link =~ URI::regexp ? link : URI::join(url, link).to_s
     end.compact.uniq
+  end
+
+  def get_title(content)
+    Nokogiri::HTML(content, 'utf-8').title
   end
 
   def crawlable? (url)
@@ -42,4 +46,4 @@ end
 
 crawler =  Crawler.new
 page = crawler.crawl("http://fmi.ruby.bg/")
-p page.content
+p page.title

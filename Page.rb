@@ -1,19 +1,19 @@
 require 'unicode'
 
 class Page
-  attr_reader :content, :url, :links
+  attr_reader :content, :title, :url, :links
 
-  def initialize(url:,content: nil, links: nil)
+  def initialize(url:, title: nil, content: nil, links: nil)
     @content = minimize_content content
-    @url, @links = url, links
+    @url, @title, @links = url, title, links
   end
 
   def marshal_dump
-    [@url, @content, @links]
+    [@url, @title, @content, @links]
   end
 
   def marshal_load(data_array)
-    @url, @content, @links = data_array
+    @url, @title, @content, @links = data_array
   end
 
   private
@@ -21,6 +21,6 @@ class Page
   def minimize_content(content)
     content.map do |element|
       Unicode.downcase(element).strip.gsub(/[^[[:alnum:]]\s]/, '').split(" ")
-    end.reject(&:empty?).flatten(1)
+    end.reject(&:empty?).flatten
   end
 end
