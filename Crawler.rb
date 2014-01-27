@@ -1,6 +1,7 @@
 require 'nokogiri'
 require 'open-uri'
 require 'robots'
+require 'stemmer'
 require  './Page'
 
 class Crawler
@@ -40,4 +41,5 @@ class Crawler
 end
 
 crawler =  Crawler.new
-crawler.crawl("http://fmi.ruby.bg/")
+page = crawler.crawl("http://fmi.ruby.bg/")
+p page.content
