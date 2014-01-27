@@ -45,5 +45,5 @@ class Crawler
 end
 
 crawler =  Crawler.new
-page = crawler.crawl("http://fmi.ruby.bg/")
-p page.title
+page = crawler.crawl("http://en.wikipedia.com/")
+p page.content
