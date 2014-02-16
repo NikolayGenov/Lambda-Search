@@ -8,10 +8,10 @@ class Analyzer
   @@stopwords = Stopwords::STOP_WORDS
 
   def analyze(page)
-    tokens = keywords_position_pairs(page.content).map do |keyword, position|
-      Token.new word: keyword, links: page.url, positions: position
+   tokens = keywords_position_pairs(page.content).map do |keyword, position|
+      Token.new word: keyword, link: page.url, position: position
     end
-    # yield page: page, tokens: tokens
+   tokens
   end
 
   def keywords_position_pairs(content)

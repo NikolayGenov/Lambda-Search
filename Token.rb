@@ -1,9 +1,7 @@
 class Token
-  Occurance = Struct.new :links, :positions
+  attr_accessor :word, :link, :position
 
-  attr_accessor :word, :occurrences
-
-  def initialize(word:,links:,positions:)
-    @word, @occurrences = word, Occurance.new(links, positions)
+  def initialize(word:,link:,position:)
+    @word, @link, @position = word, link, position
   end
 end

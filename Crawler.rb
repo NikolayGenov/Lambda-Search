@@ -3,6 +3,9 @@ require 'open-uri'
 require 'robots'
 require 'stemmer'
 require  './Page'
+require  'open_uri_redirections'
+
+DO_NOT_CRAWL_TYPES = %w(.pdf mobi epub .doc .xls .ppt .exe .mp3 .m4v .avi .mpg .rss .xml .json .txt .git .zip .md5 .asc .jpg .gif .png .jpeg)
 
 class Crawler
   def initialize(user_agent:'lambda-crawler')
@@ -11,7 +14,7 @@ class Crawler
   end
 
   def crawl(url)
-    raw_content = open(url,'User-Agent'=> @user_agent, &:read)
+    raw_content = open(url,'User-Agent'=> @user_agent, :allow_redirections => :all, &:read)
     Page.new url: url, content: get_content(raw_content),
       links: get_links(url, raw_content), title: get_title(raw_content)
   end
@@ -40,10 +43,18 @@ class Crawler
   end
 
   def crawlable? (url)
-    urk =~ URI::regexp and @robot.allowed?
+    return false if DO_NOT_CRAWL_TYPES.include? url[(url.size-4)..url.size] or url.include? '?' or url.include? '/cgi-bin/' or url.include? '&amp;' or url[0..9] == 'javascript' or url[0..5] == 'mailto' or url.include? '#'
+   is_valid_url?(url) and @robot.allowed? url
+  end
+
+  def is_valid_url?(url)
+    uri = URI.parse url
+    uri.kind_of? URI::HTTP
+  rescue URI::InvalidURIError
+    false
   end
 end
-
-crawler =  Crawler.new
-page = crawler.crawl("http://en.wikipedia.com/")
-p page.content
+#crawler =  Crawler.new
+# TEST crawler.is_valid_url?("/wiki/Wikipedia:Please_clarify")
+#page = crawler.crawl("http://en.wikipedia.com/")
+#p page.content
