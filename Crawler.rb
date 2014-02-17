@@ -5,7 +5,7 @@ require 'stemmer'
 require  './Page'
 require  'open_uri_redirections'
 
-DO_NOT_CRAWL_TYPES = %w(.pdf mobi epub .doc .xls .ppt .exe .mp3 .m4v .avi .mpg .rss .xml .json .txt .git .zip .md5 .asc .jpg .gif .png .jpeg)
+DO_NOT_CRAWL_TYPES = %w(.pdf mobi epub .doc .xls .ppt .exe .mp3 .m4v .avi .mpg .rss .xml json .txt .git .zip .md5 .asc .jpg .gif .png jpeg r.gz)
 
 class Crawler
   def initialize(user_agent:'lambda-crawler')
