@@ -1,8 +1,8 @@
 require 'stopwords'
 require 'stemmer'
 require 'unicode'
-require './Token'
 require './Page'
+require './Token'
 
 class Analyzer
   @@stopwords = Stopwords::STOP_WORDS
