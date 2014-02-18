@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta content="text/html; charset=utf-8"
+http-equiv="content-type">
+<title>Lambda Search</title>
+<style>
+body {
+  font-family:"helvetica",tahoma,arial,sans-serif;
+  font-size:12px;
+  margin:5;
+  padding:5;
+}
+</style>
+</head>
+<body>
+<h2>Lambda Search</h2>
+<form method="post" action="/search">
+  <input name="input" value="<%= params[:q]%>" size="30"> <input value="search" type="submit">
+</form>
+
+<div><%= "Time to process: #{@time_taken}" unless @results.nil?%></div>
+<div id='results'>
+  <ol>
+    <% @results.each { |result| %>
+      <li><a href='<%=result.first%>'><%=result.last%></a>    Link:<%=result.first%> <br>
+    <% } unless @results.nil? %>
+  </ol>
+</div>
+</body>
+</html>
