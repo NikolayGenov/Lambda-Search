@@ -15,7 +15,7 @@ class PageRank
 
     0.upto(NUMBER_LOOPS) {  @ranks =  get_new_hash_ranks }
 
-    @ranks.sort_by {|k,v| v}.reverse
+    @ranks.sort_by {|_,v| v}.reverse
   end
 
   def get_new_rank(page)

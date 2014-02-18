@@ -7,7 +7,7 @@ class PostgresDirect
   end
 
   def create_table
-      @conn.exec("CREATE TABLE words (id serial NOT NULL, word character varying(255), url character varying(255),position integer, CONSTRAINT words_pkey PRIMARY KEY (id)) WITH (OIDS=FALSE);");
+    @conn.exec("CREATE TABLE words (id serial NOT NULL, word character varying(255), url character varying(255),position integer, CONSTRAINT words_pkey PRIMARY KEY (id)) WITH (OIDS=FALSE);");
   end
 
   def drop_table
@@ -22,14 +22,25 @@ class PostgresDirect
     @conn.exec_prepared("insert_word", [word, url, position])
   end
 
-  def query_table
-    @conn.exec( "SELECT * FROM words") do |result|
+  def transaction(&block)
+    @conn.transaction { yield }
+  end
+
+  def query(arguments = "")
+    @conn.exec( "SELECT * FROM words #{arguments}") do |result|
       result.each do |row|
         yield row if block_given?
       end
     end
   end
 
+  def query_select(what, arguments = "")
+    @conn.exec( "SELECT #{what} FROM words #{arguments}") do |result|
+      result.each do |row|
+        yield row if block_given?
+      end
+    end
+  end
   def disconnect
     @conn.close
   end

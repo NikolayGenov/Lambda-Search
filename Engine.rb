@@ -16,8 +16,8 @@ class Engine
   def load_ulrs_data()
     @crawled_urls  = File.readlines(@options[:crawled_file]). map(&:chomp)
     @urls_to_crawl = File.readlines(@options[:to_crawl_file]).map(&:chomp)
-     dumped_file = File.read(@options[:graph_file])
-     @graph = dumped_file.empty? ? {} : Marshal.load(dumped_file)
+    dumped_file = File.read(@options[:graph_file])
+    @graph = dumped_file.empty? ? {} : Marshal.load(dumped_file)
   end
 
   def init_DB
@@ -59,8 +59,10 @@ class Engine
           if @crawler.crawlable? url and not crawled? url
             page   =  @crawler.crawl url
             tokens =  @analyzer.analyze page
-           # tokens.each { |token| @db.add_word(token.word, token.link, token.position) }
-            @count +=1
+            @db.transaction do
+              tokens.each { |token| @db.add_word(token.word, token.link, token.position) }
+            end
+            @count += 1
             p @count
             @graph[url] =  page.links #used by PageRank
             @urls_to_crawl += page.links
@@ -74,7 +76,7 @@ class Engine
         ensure
           @crawled_urls << url
           @urls_to_crawl.delete url
-          write_links_to_files if @count  >= @options[:max_urls]
+          write_links_to_files if @count % @options[:max_urls]
           break if @count >= @options[:max_urls]
         end
       end
@@ -82,12 +84,12 @@ class Engine
   end
 end
 begin
-  en = Engine.new crawled_file: "crawled.txt", to_crawl_file: "to_crawl.txt", logger_file: "logfile.log", graph_file: "graph",  max_urls: 10
+  en = Engine.new crawled_file: "crawled.txt", to_crawl_file: "to_crawl.txt", logger_file: "logfile.log", graph_file: "graph",  max_urls: 100
   en.init_DB
   # en.process("http://en.wikipedia.com/")
-  en.process("http://google.com/")
-#  en.process("http://fmi.ruby.bg/")
-  #  en.get_data
+  # en.process("http://google.com/")
+  en.process("http://fmi.ruby.bg/")
+  en.get_data
 ensure
   en.kill_DB
 end
