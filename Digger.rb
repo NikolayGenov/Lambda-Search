@@ -7,19 +7,18 @@ class Digger
   def initialize
     @db = PostgresDirect.new
     @db.connect
-    @search_data = []
+    @page_rank
   end
 
   def search(text)
     @search_params = Analyzer::get_words text.split(" ")
     return if @search_params.empty?
-    wrds = []
-    @search_params.each { |param| wrds << "word = '#{param}'" }
-    @word_sql = "where #{wrds.join(" or ")}"
-    @db.query(@word_sql) { |row| @search_data << row }
+    @word_sql = get_words_sql
+
     #Apply page rank
-    rank[0..SEARCH_LIMIT]
+    rank_result = rank[0..SEARCH_LIMIT]
     @db.disconnect
+    rank_result
   end
 
   def rank
@@ -53,11 +52,13 @@ class Digger
   end
 
   def diff_count_ranking
-    return {} if @search_data.size == 1
+    search_data = []
+    @db.query(@word_sql) { |row| search_data << row }
+    return {} if search_data.size == 1
     list, hash, rank = [], {}, {}
 
-    @search_data.each { |item| hash[item['url']] = [] }
-    @search_data.each { |item| hash[item['url']] << item['word'] }
+    search_data.each { |item| hash[item['url']] = [] }
+    search_data.each { |item| hash[item['url']] << item['word'] }
 
     hash.each { |item| list <<  { :url => item.first , :ratio => get_ratio(item) } }
 
@@ -65,6 +66,12 @@ class Digger
     list.each { |item| rank[item[:url]] = list.first[:ratio] / item[:ratio].to_f }
 
     rank
+  end
+
+  def get_words_sql
+    words = []
+    @search_params.each { |param| words << "word = '#{param}'" }
+    "where #{words.join(" or ")}"
   end
 
   def get_ratio(item)
