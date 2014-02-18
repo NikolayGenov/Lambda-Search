@@ -1,10 +1,12 @@
 require './Analyzer'
 require 'pp'
 require './WordRank'
+require './PageRank'
+
 class Digger
 
-  def initialize(page_rank_file:, titles_file:, max_results:)
-    @page_rank   = load_file page_rank_file
+  def initialize(page_rank_file:, titles_file:,graph_file:, max_results:)
+    @page_rank   = PageRank.new(graph_file).compute_ranks
     @titles      = load_file titles_file
     @max_results = max_results
   end
@@ -15,8 +17,9 @@ class Digger
 
     word_rank   = WordRank.new(@search_words).rank
     rank        = apply_page_rank word_rank
-    titled_rank = add_titles rank
-    titled_rank.sort_by { |_,v| v}.reverse[0..@max_results]
+
+    titled_rank = add_titles rank.sort_by { |_,v| v}.reverse
+    titled_rank.take @max_results
   end
 
   def apply_page_rank(word_rank)
@@ -34,6 +37,6 @@ class Digger
   end
 end
 
-#dig =  Digger.new page_rank_file: "ranks",titles_file: "titles", max_results:20
+#dig =  Digger.new page_rank_file: "ranks",titles_file: "titles",graph_file: "graph", max_results:20
 #pp dig.search("ruby")
 
