@@ -16,8 +16,10 @@ class Engine
   def load_ulrs_data()
     @crawled_urls  = File.readlines(@options[:crawled_file]). map(&:chomp)
     @urls_to_crawl = File.readlines(@options[:to_crawl_file]).map(&:chomp)
-    dumped_file = File.read(@options[:graph_file])
-    @graph = dumped_file.empty? ? {} : Marshal.load(dumped_file)
+    dumped_graph = File.read(@options[:graph_file])                    #TODO DRY - new method needed
+    @graph  = dumped_graph.empty? ? {} : Marshal.load(dumped_graph)
+    dumped_titles = File.read(@options[:titles_file])
+    @titles = dumped_titles.empty? ? {} : Marshal.load(dumped_titles)
   end
 
   def init_DB
@@ -48,7 +50,8 @@ class Engine
     File.open(@options[:crawled_file], "w") do |f|
       @crawled_urls.each { |link| f.write "#{link}\n"}
     end
-    File.open(@options[:graph_file], "w") { |f| f.write  Marshal.dump(@graph) }
+    File.open(@options[:graph_file], "w")  { |f| f.write  Marshal.dump(@graph) }
+    File.open(@options[:titles_file], "w") { |f| f.write  Marshal.dump(@titles) }
   end
 
   def process(url_link)
@@ -64,7 +67,8 @@ class Engine
             end
             @count += 1
             p @count
-            @graph[url] =  page.links #used by PageRank
+            @titles[url] = page.title
+            @graph[url] = page.links #used by PageRank
             @urls_to_crawl += page.links
           end
         rescue URI::InvalidURIError
@@ -84,12 +88,12 @@ class Engine
   end
 end
 begin
-  en = Engine.new crawled_file: "crawled.txt", to_crawl_file: "to_crawl.txt", logger_file: "logfile.log", graph_file: "graph",  max_urls: 10
+  en = Engine.new crawled_file: "crawled.txt", to_crawl_file: "to_crawl.txt", logger_file: "logfile.log", graph_file: "graph",titles_file: "titles",  max_urls: 10
   en.init_DB
   # en.process("http://en.wikipedia.com/")
-  # en.process("http://google.com/")
-#  en.process("http://fmi.ruby.bg/")
+ # en.process("http://google.com/")
+  en.process("http://fmi.ruby.bg/")
 #  en.get_data
 ensure
-  en.kill_DB
+#  en.kill_DB
 end
