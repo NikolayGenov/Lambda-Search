@@ -2,39 +2,40 @@ require 'logger'
 require './Crawler'
 require './Analyzer'
 require './Token_Storer'
+require './Utilities'
 class Engine
+  include Utilities
   def initialize(options = {})
     @options = options
     @crawler = Crawler.new
     @analyzer = Analyzer.new
     @db = PostgresDirect.new
-    @count = 0
     @logger = Logger.new @options[:logger_file]
-    load_ulrs_data
+    load_data
+    init_DB
   end
 
-  def load_ulrs_data()
-    @crawled_urls  = File.readlines(@options[:crawled_file]). map(&:chomp)
-    @urls_to_crawl = File.readlines(@options[:to_crawl_file]).map(&:chomp)
-    dumped_graph = File.read(@options[:graph_file])                    #TODO DRY - new method needed
-    @graph  = dumped_graph.empty? ? {} : Marshal.load(dumped_graph)
-    dumped_titles = File.read(@options[:titles_file])
-    @titles = dumped_titles.empty? ? {} : Marshal.load(dumped_titles)
+  def load_data()
+    @crawled_urls  = read_text_lines   @options[:crawled_file]
+    @urls_to_crawl = read_text_lines   @options[:to_crawl_file]
+    @graph         = load_marshal_hash @options[:graph_file]
+    @titles        = load_marshal_hash @options[:titles_file]
   end
 
   def init_DB
     @db.connect
-    @db.create_table
+    #@db.create_table
     @db.prepare_insert_statement
   end
 
   def kill_DB
     # @db.drop_table
-    @db.disconnect
+  #  @db.disconnect
   end
 
+  #TODO - remove
   def get_data
-    @db.query{|row| printf("%d %s %s %d\n", row['id'], row['word'], row['url'], row['position'])}
+    @db.query{|row| printf("%d \n", row['id'] )}
   end
 
   def crawled?(url)
@@ -42,59 +43,69 @@ class Engine
   end
 
   def write_links_to_files
-    @urls_to_crawl.uniq!
-    @crawled_urls.uniq!
-    File.open(@options[:to_crawl_file], "w") do |f|
-      @urls_to_crawl.each { |link| f.write "#{link}\n"}
-    end
-    File.open(@options[:crawled_file], "w") do |f|
-      @crawled_urls.each { |link| f.write "#{link}\n"}
-    end
-    File.open(@options[:graph_file], "w")  { |f| f.write  Marshal.dump(@graph) }
-    File.open(@options[:titles_file], "w") { |f| f.write  Marshal.dump(@titles) }
+    write_text_lines     @options[:to_crawl_file], @urls_to_crawl
+    write_text_lines     @options[:crawled_file],  @crawled_urls
+    marshal_dump_to_file @options[:graph_file],    @graph
+    marshal_dump_to_file @options[:titles_file],   @titles
   end
 
-  def process(url_link)
-    @urls_to_crawl.unshift url_link
-    until @urls_to_crawl.empty? or @count >= @options[:max_urls]
-      @urls_to_crawl.each do |url|
-        begin
-          if @crawler.crawlable? url and not crawled? url
-            page   =  @crawler.crawl url
-            tokens =  @analyzer.analyze page
-            @db.transaction do
-              tokens.each { |token| @db.add_word(token.word, token.link, token.position) }
-            end
-            @count += 1
-            p @count
-            @titles[url] = page.title
-            @graph[url] = page.links #used by PageRank
-            @urls_to_crawl += page.links
-          end
-        rescue URI::InvalidURIError
-          @logger.error "Invalid URI link: #{url}"
-        rescue OpenURI::HTTPError
-          @logger.error "HTTP Error opening: #{url}"
-        rescue Exception => e
-          @logger.error "Error: #{e} with this: #{url}"
-        ensure
-          @crawled_urls << url
-          @urls_to_crawl.delete url
-          write_links_to_files if @count % @options[:max_urls]/10
-          break if @count >= @options[:max_urls]
+  def process(seed)
+    count = 0
+    add_to_crawl seed
+    until @urls_to_crawl.empty? or count == @options[:max_urls]
+      begin
+        url = @urls_to_crawl[count]
+        if @crawler.crawlable? url and not crawled? url
+          count = process_page url, count
+          p count
         end
+      rescue URI::InvalidURIError
+        @logger.error "Invalid URI link: #{url}"
+      rescue OpenURI::HTTPError
+        @logger.error "HTTP Error opening: #{url}"
+      rescue SocketError => e
+        @logger.error "Socket error #{e}  opening: #{url}"
+      rescue SystemCallError => e
+        @logger.error "System call error #{e}  opening: #{url}"
+      rescue RuntimeError => e
+        @logger.error "Error: #{e} with this: #{url}"
+      ensure
+        @crawled_urls << url
+        @urls_to_crawl.delete url
       end
+    end
+  ensure
+    write_links_to_files
+   # kill_DB
+  end
+
+  def add_to_crawl(seed)
+    seed.each { |url| @urls_to_crawl << url }
+  end
+
+  def process_page(url, count)
+    page = @crawler.crawl url
+    add_words_to_DB @analyzer.analyze page
+    save_additional_url_data url, page
+    count + 1
+  end
+
+  def save_additional_url_data(url, page)
+    @titles[url] = page.title
+    @graph[url] = page.links #used by PageRank
+    @urls_to_crawl += page.links
+  end
+
+  def add_words_to_DB(tokens)
+    @db.transaction do
+      tokens.each { |token| @db.add_word(token.word, token.link, token.position) }
     end
   end
 end
-begin
-  en = Engine.new crawled_file: "crawled.txt", to_crawl_file: "to_crawl.txt", logger_file: "logfile.log",
-    graph_file: "graph",titles_file: "titles",  max_urls: 100
-  en.init_DB
-  # en.process("http://en.wikipedia.com/")
- # en.process("http://google.com/")
-  en.process("http://fmi.ruby.bg/")
-#  en.get_data
-ensure
-  en.kill_DB
-end
+
+en = Engine.new crawled_file: "crawled.txt", to_crawl_file: "to_crawl.txt", logger_file: "logfile.log",
+  graph_file: "graph",titles_file: "titles",  max_urls: 1000
+# en.process("http://en.wikipedia.com/")
+# en.process("http://google.com/")
+en.process(["http://fmi.ruby.bg/"])
+  en.get_data

@@ -1,6 +1,8 @@
 require './Token_Storer'
+require './Utilities'
 
 class WordRank
+  include Utilities
 
   def initialize(search_words)
     @db = PostgresDirect.new
@@ -75,11 +77,5 @@ class WordRank
     words = []
     @search_words.each { |word| words << "word = '#{word}'" }
     "where #{words.join(" or ")}"
-  end
-  #TODO utils ?
-  def frequencies(array)
-    array.each_with_object Hash.new(0) do |value, result|
-      result[value] += 1
-    end
   end
 end

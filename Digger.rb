@@ -1,13 +1,14 @@
 require './Analyzer'
 require 'pp'
 require './WordRank'
-require './PageRank'
+require './Utilities'
 
 class Digger
+  include Utilities
 
-  def initialize(page_rank_file:, titles_file:,graph_file:, max_results:)
-    @page_rank   = PageRank.new(graph_file).compute_ranks
-    @titles      = load_file titles_file
+  def initialize(titles_file:,page_rank_file:, max_results:)
+    @page_rank   = load_marshal_hash page_rank_file
+    @titles      = load_marshal_hash titles_file
     @max_results = max_results
   end
 
@@ -23,20 +24,14 @@ class Digger
   end
 
   def apply_page_rank(word_rank)
-    word_rank.each { |key, value| word_rank[key] = @page_rank[key] * value }
+    word_rank.each { |key, value| word_rank[key] = value * @page_rank.fetch(key, 0)  }
   end
 
   def add_titles(rank)
-    rank.each { |item| item << @titles[item.first] }
-  end
-
-  #TODO - utils ?
-  def load_file(file_name) #TODO DRY -in engine and here
-    file = File.read(file_name)
-    file.empty? ? {} : Marshal.load(file)
+    rank.each { |item| item << @titles.fetch(item.first, "") }
   end
 end
 
-#dig =  Digger.new page_rank_file: "ranks",titles_file: "titles",graph_file: "graph", max_results:20
+#dig =  Digger.new titles_file: "titles", page_rank_file: "ranks", max_results:20
 #pp dig.search("ruby")
 

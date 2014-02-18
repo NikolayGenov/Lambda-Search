@@ -6,7 +6,7 @@ get '/' do
 end
 
 post '/search' do
-  digger = Digger.new page_rank_file: "ranks", titles_file:"titles", graph_file:"graph", max_results: 20
+  digger = Digger.new page_rank_file: "ranks", titles_file:"titles", max_results: 20
   time_start = Time.now
   @results = digger.search(params[:input])
   time_end = Time.now

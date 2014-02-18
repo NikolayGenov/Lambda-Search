@@ -1,20 +1,24 @@
+require './Utilities'
+
 class PageRank
+  include Utilities
 
   DAMPING_FACTOR = 0.8
   NUMBER_LOOPS = 10
 
-  def initialize(graph_file)
+  def initialize(graph_file:,page_rank_file:)
     @graph = Marshal.load File.read graph_file
     @number_pages = @graph.size
+    @page_rank_file = page_rank_file
     @ranks = {}
   end
 
-  def compute_ranks
+  def save_ranks
     @graph.keys.each { |url| @ranks[url] = 1.0 / @number_pages }
 
     NUMBER_LOOPS.times { @ranks =  get_new_hash_ranks }
 
-    @ranks
+    marshal_dump_to_file @page_rank_file, @ranks
   end
 
   def get_new_rank(page)
@@ -37,3 +41,5 @@ class PageRank
     newranks
   end
 end
+
+PageRank.new(graph_file:"graph",page_rank_file: "ranks").save_ranks
