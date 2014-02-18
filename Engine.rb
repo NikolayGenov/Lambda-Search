@@ -24,7 +24,7 @@ class Engine
 
   def init_DB
     @db.connect
-    #@db.create_table
+    @db.create_table
     @db.prepare_insert_statement
   end
 
@@ -80,7 +80,7 @@ class Engine
         ensure
           @crawled_urls << url
           @urls_to_crawl.delete url
-          write_links_to_files if @count % @options[:max_urls]
+          write_links_to_files if @count % @options[:max_urls]/10
           break if @count >= @options[:max_urls]
         end
       end
@@ -88,12 +88,13 @@ class Engine
   end
 end
 begin
-  en = Engine.new crawled_file: "crawled.txt", to_crawl_file: "to_crawl.txt", logger_file: "logfile.log", graph_file: "graph",titles_file: "titles",  max_urls: 10
+  en = Engine.new crawled_file: "crawled.txt", to_crawl_file: "to_crawl.txt", logger_file: "logfile.log",
+    graph_file: "graph",titles_file: "titles",  max_urls: 100
   en.init_DB
   # en.process("http://en.wikipedia.com/")
  # en.process("http://google.com/")
   en.process("http://fmi.ruby.bg/")
 #  en.get_data
 ensure
-#  en.kill_DB
+  en.kill_DB
 end
