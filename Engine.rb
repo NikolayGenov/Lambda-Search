@@ -32,7 +32,7 @@ class Engine
   end
 
   def get_data
-    @db.query_table {|row| printf("%d %s %s %d\n", row['id'], row['word'], row['url'], row['position'])}
+    @db.query{|row| printf("%d %s %s %d\n", row['id'], row['word'], row['url'], row['position'])}
   end
 
   def crawled?(url)
@@ -84,12 +84,12 @@ class Engine
   end
 end
 begin
-  en = Engine.new crawled_file: "crawled.txt", to_crawl_file: "to_crawl.txt", logger_file: "logfile.log", graph_file: "graph",  max_urls: 100
+  en = Engine.new crawled_file: "crawled.txt", to_crawl_file: "to_crawl.txt", logger_file: "logfile.log", graph_file: "graph",  max_urls: 10
   en.init_DB
   # en.process("http://en.wikipedia.com/")
   # en.process("http://google.com/")
-  en.process("http://fmi.ruby.bg/")
-  en.get_data
+#  en.process("http://fmi.ruby.bg/")
+#  en.get_data
 ensure
   en.kill_DB
 end

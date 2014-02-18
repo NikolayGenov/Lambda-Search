@@ -2,12 +2,11 @@ require './Analyzer'
 require 'pp'
 require './Token_Storer'
 class Digger
-  SEARCH_LIMIT = 19
 
-  def initialize
+  def initialize(page_rank_file:)
     @db = PostgresDirect.new
     @db.connect
-    @page_rank
+    @page_rank = load_rank page_rank_file
   end
 
   def search(text)
@@ -15,20 +14,33 @@ class Digger
     return if @search_params.empty?
     @word_sql = get_words_sql
 
-    #Apply page rank
-    rank_result = rank[0..SEARCH_LIMIT]
+    rank = apply_page_rank word_rank
     @db.disconnect
-    rank_result
+
+    rank.sort_by { |_,v| v}.reverse
   end
 
-  def rank
+  def word_rank
     merge_rankings(frequency_ranking, location_ranking, diff_count_ranking)
+  end
+
+  def apply_page_rank(word_rank)
+    rank = {}
+
+    word_rank.each do |key, value|
+      page_rank_value = @page_rank[key].nil? ? 0 : @page_rank[key] #TODO Remove - bug because table got more data than rank
+      rank[key] = page_rank_value * value
+    end
+
+    rank
   end
 
   def merge_rankings(*rankings)
     rank = {}
-    rankings.each { |ranking| rank.merge!(ranking) { |key, oldval, newval| oldval + newval} }
-    rank.sort_by {|_,v| v }.reverse
+
+    rankings.each { |ranking| rank.merge!(ranking) { |key, old, new| old + new} }
+
+    rank
   end
 
   def frequency_ranking
@@ -88,7 +100,13 @@ class Digger
     end
   end
 
+  def load_rank(file_name)
+    rank_file = File.read(file_name)
+    rank_file.empty? ? {} : Marshal.load(rank_file)
+
+  end
+
 end
 
-dig=  Digger.new
-pp dig.search("hash array matz")
+dig =  Digger.new page_rank_file: "ranks"
+pp dig.search("ruby")
