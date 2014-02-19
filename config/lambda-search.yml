@@ -1,0 +1,17 @@
+
+engine:
+  logger_file: "logfile.log"
+  max_urls: 100
+
+files:
+  crawled_file: "crawlex.txt"
+  to_crawl_file: "to_crawl.txt"
+  graph_file: "graph"
+  titles_file: "titles"
+  page_rank_file: "ranks"
+
+database:
+  db_name: "development"
+
+crawler:
+  user_agent: "lambda-crawler"

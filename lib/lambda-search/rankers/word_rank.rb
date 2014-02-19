@@ -1,81 +1,85 @@
-require './Token_Storer'
-require './Utilities'
+require 'utilities/utilities'
+require 'database'
 
-class WordRank
-  include Utilities
+module Lambda_Search
+  module Rankers
+    class WordRank
+      include Utilities
 
-  def initialize(search_words)
-    @db = PostgresDirect.new
-    @db.connect
-    @search_words = search_words
+      def initialize(search_words)
+        @db = PostgresDirect.new
+        @db.connect
+        @search_words = search_words
 
-    @word_sql = get_words_sql
-  end
+        @word_sql = get_words_sql
+      end
 
-  def rank
-    rank = merge_rankings(frequency_ranking, location_ranking, diff_count_ranking)
-    @db.disconnect
-    rank
-  end
-
-
-  def merge_rankings(*rankings)
-    rank = {}
-
-    rankings.each { |ranking| rank.merge!(ranking) { |key, old, new| old + new} }
-
-    rank
-  end
+      def rank
+        rank = merge_rankings(frequency_ranking, location_ranking, diff_count_ranking)
+        @db.disconnect
+        rank
+      end
 
 
-  def frequency_ranking
-    list, rank = [], {}
+      def merge_rankings(*rankings)
+        rank = {}
 
-    group_sql = "GROUP BY url ORDER BY count DESC"
-    @db.query_select("DISTINCT url, count(*)", " #{@word_sql} #{group_sql}") { |row| list << row }
-    list.each { |item| rank[item["url"]] = item["count"].to_f / list.first["count"].to_f }
+        rankings.each { |ranking| rank.merge!(ranking) { |key, old, new| old + new} }
 
-    rank
-  end
+        rank
+      end
 
-  def location_ranking
-    list, rank = [], {}
 
-    group_sql = "GROUP BY url ORDER BY min "
-    @db.query_select(" url, MIN(position + 1) ", " #{@word_sql} #{group_sql}") { |row| list << row }
-    list.each { |item| rank[item["url"]] = list.first["min"].to_f / item["min"].to_f }
+      def frequency_ranking
+        list, rank = [], {}
 
-    rank
-  end
+        group_sql = "GROUP BY url ORDER BY count DESC"
+        @db.query_select("DISTINCT url, count(*)", " #{@word_sql} #{group_sql}") { |row| list << row }
+        list.each { |item| rank[item["url"]] = item["count"].to_f / list.first["count"].to_f }
 
-  def diff_count_ranking
-    search_data = []
-    @db.query(@word_sql) { |row| search_data << row }
-    return {} if search_data.size == 1
-    list, hash, rank = [], {}, {}
+        rank
+      end
 
-    search_data.each { |item| hash[item['url']] = [] }
-    search_data.each { |item| hash[item['url']] << item['word'] }
+      def location_ranking
+        list, rank = [], {}
 
-    hash.each { |item| list <<  { :url => item.first , :ratio => get_ratio(item) } }
+        group_sql = "GROUP BY url ORDER BY min "
+        @db.query_select(" url, MIN(position + 1) ", " #{@word_sql} #{group_sql}") { |row| list << row }
+        list.each { |item| rank[item["url"]] = list.first["min"].to_f / item["min"].to_f }
 
-    list.sort_by! { |hsh| hsh[:ratio]}.reverse
-    list.each { |item| rank[item[:url]] = list.first[:ratio] / item[:ratio].to_f }
+        rank
+      end
 
-    rank
-  end
+      def diff_count_ranking
+        search_data = []
+        @db.query(@word_sql) { |row| search_data << row }
+        return {} if search_data.size == 1
+        list, hash, rank = [], {}, {}
 
-  def get_ratio(item)
-    values     = frequencies(item.last).values
-    max_value  = values.max + 1
-    sum_values = values.reduce(&:+)
-    ratio      = (sum_values - max_value * @search_words.size.to_f) / max_value
-    ratio.abs
-  end
+        search_data.each { |item| hash[item['url']] = [] }
+        search_data.each { |item| hash[item['url']] << item['word'] }
 
-  def get_words_sql
-    words = []
-    @search_words.each { |word| words << "word = '#{word}'" }
-    "where #{words.join(" or ")}"
+        hash.each { |item| list <<  { :url => item.first , :ratio => get_ratio(item) } }
+
+        list.sort_by! { |hsh| hsh[:ratio]}.reverse
+        list.each { |item| rank[item[:url]] = list.first[:ratio] / item[:ratio].to_f }
+
+        rank
+      end
+
+      def get_ratio(item)
+        values     = frequencies(item.last).values
+        max_value  = values.max + 1
+        sum_values = values.reduce(&:+)
+        ratio      = (sum_values - max_value * @search_words.size.to_f) / max_value
+        ratio.abs
+      end
+
+      def get_words_sql
+        words = []
+        @search_words.each { |word| words << "word = '#{word}'" }
+        "where #{words.join(" or ")}"
+      end
+    end
   end
 end

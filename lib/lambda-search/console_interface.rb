@@ -1,4 +1,4 @@
-require './Digger'
+require 'digger'
 
 digger = Digger.new page_rank_file: "ranks", titles_file:"titles", max_results: 20
 time_start = Time.now

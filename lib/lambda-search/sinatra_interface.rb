@@ -1,4 +1,4 @@
-require './Digger'
+require 'digger'
 require 'sinatra'
 
 get '/' do
