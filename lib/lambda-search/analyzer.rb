@@ -1,15 +1,15 @@
 require 'stopwords'
 require 'stemmer'
 require 'unicode'
-require 'objects/page'
-require 'objects/token'
+require_relative 'objects/page'
+require_relative 'objects/token'
 
 module Lambda_Search
   class Analyzer
     @@stopwords = Stopwords::STOP_WORDS
     def analyze(page)
       tokens = Analyzer::keywords_position_pairs(page.content).map do |keyword, position|
-        Token.new word: keyword, link: page.url, position: position
+        Objects::Token.new word: keyword, link: page.url, position: position
       end
       tokens
     end

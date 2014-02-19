@@ -14,6 +14,12 @@ module Lambda_Search
       @conn.exec("CREATE TABLE words (id serial NOT NULL, word character varying(255), url character varying(255),position integer, CONSTRAINT words_pkey PRIMARY KEY (id)) WITH (OIDS=FALSE);");
     end
 
+    def table_exist?
+      @conn.exec("select count(*) from pg_catalog.pg_tables where tablename = 'words'") do |result|
+        result.each  {|hash| return !hash["count"].to_i.zero? }
+      end
+    end
+
     def drop_table
       @conn.exec("DROP TABLE words")
     end

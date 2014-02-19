@@ -3,7 +3,7 @@ require 'open-uri'
 require 'robots'
 require 'stemmer'
 require 'open_uri_redirections'
-require 'objects/page'
+require_relative 'objects/page'
 
 module Lambda_Search
   DO_NOT_CRAWL_TYPES = %w(.pdf mobi epub .doc .xls .ppt .exe .mp3 .m4v .avi .mpg .rss .xml json .txt .git .zip .md5 .asc .jpg .gif .png jpeg r.gz)
@@ -16,7 +16,7 @@ module Lambda_Search
 
     def crawl(url)
       raw_content = open(url,'User-Agent'=> @user_agent, :allow_redirections => :all, &:read)
-      Page.new url: url, content: get_content(raw_content),
+      Objects::Page.new url: url, content: get_content(raw_content),
         links: get_links(url, raw_content), title: get_title(raw_content)
     end
 

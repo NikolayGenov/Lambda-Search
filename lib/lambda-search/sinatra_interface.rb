@@ -1,4 +1,4 @@
-require 'digger'
+require_relative 'digger'
 require 'sinatra'
 
 get '/' do

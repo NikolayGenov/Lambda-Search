@@ -1,6 +1,5 @@
-require 'lambda-search/engine'
-require 'lambda-search/digger'
-require 'lambda-search/crawler'
-require 'lambda-search/rankers/page_rank'
-require 'lambda-search/rankers/page_rank'
+require_relative 'lambda-search/engine'
+require_relative 'lambda-search/digger'
+require_relative 'lambda-search/crawler'
+require_relative 'lambda-search/page_rank'
 

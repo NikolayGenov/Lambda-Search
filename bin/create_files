@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+$LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
+
+require 'yaml'
+require 'lambda-search'
+
+config = YAML::load File.read File.dirname(__FILE__) + '/../config/lambda-search.yml'
+
+CONFIG_NAMES = ['crawled_file','to_crawl_file','graph_file','titles_file','logger_file']
+
+CONFIG_NAMES.each { |name| File.write config['files'][name], "" }
+

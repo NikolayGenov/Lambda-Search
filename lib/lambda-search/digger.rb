@@ -1,7 +1,6 @@
-require 'analyzer'
-require 'pp'
-require 'word_rank'
-require 'utilities/utilities'
+require_relative 'analyzer'
+require_relative 'word_rank'
+require_relative 'utilities/utilities'
 
 module Lambda_Search
   class Digger

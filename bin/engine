@@ -1,21 +1,20 @@
 #!/usr/bin/env ruby
-# encoding: utf-8
 $LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
-
 
 require 'yaml'
 require 'lambda-search'
 
 config = YAML::load File.read File.dirname(__FILE__) + '/../config/lambda-search.yml'
 
-engine = Engine.new max_urls:      config['engine']['max_urls'],
-                    crawled_file:  config['files']['crawled_file'],
-                    to_crawl_file: config['files']['to_crawl_file'],
-                    logger_file:   config['engine']['logger_file'],
-                    graph_file:    config['files']['graph_file'],
-                    titles_file:   config['files']['titles_file'],
-                    db_name:       config['database']['db_name'],
-                    user_agent:    config['crawler']['user_agent']
+engine = Lambda_Search::Engine.new max_urls: config['engine']['max_urls'],
+                              crawled_file:  config['files']['crawled_file'],
+                              to_crawl_file: config['files']['to_crawl_file'],
+                              logger_file:   config['engine']['logger_file'],
+                              graph_file:    config['files']['graph_file'],
+                              titles_file:   config['files']['titles_file'],
+                              db_name:       config['database']['db_name'],
+                              user_agent:    config['crawler']['user_agent']
 
 
-
+engine.process(["http://fmi.ruby.bg/"])
+#TODO add seed

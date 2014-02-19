@@ -1,16 +1,16 @@
 require 'logger'
-require 'crawler'
-require 'analyzer'
-require 'database'
-require 'utilities/utilities'
+require_relative 'crawler'
+require_relative 'analyzer'
+require_relative 'database'
+require_relative 'utilities/utilities'
 
 module Lambda_Search
   class Engine
     include Utilities
     def initialize(options = {})
       @options = options
-      @crawler = Crawler.new
-      @analyzer = Analyzer.new @options[:user_agent]
+      @crawler = Crawler.new user_agent: @options[:user_agent]
+      @analyzer = Analyzer.new
       @db = PostgresDirect.new db_name: @options[:db_name]
       @logger = Logger.new @options[:logger_file]
       load_data
@@ -26,7 +26,7 @@ module Lambda_Search
 
     def init_DB
       @db.connect
-      @db.create_table
+      @db.create_table unless @db.table_exist?
       @db.prepare_insert_statement
     end
 
@@ -104,11 +104,11 @@ module Lambda_Search
       end
     end
   end
-end
 
 #en = Engine.new crawled_file: "crawled.txt", to_crawl_file: "to_crawl.txt", logger_file: "logfile.log",
-# graph_file: "graph",titles_file: "titles",  max_urls: 1000 , db_name: "development", user_agent: "lambda-crawler"
-# en.process("http://en.wikipedia.com/")
+ #graph_file: "graph",titles_file: "titles",  max_urls: 1000 , db_name: "development", user_agent: "lambda-crawler"
+ #en.process("http://en.wikipedia.com/")
 # en.process("http://google.com/")
 #en.process(["http://fmi.ruby.bg/"])
 # en.get_data
+end
