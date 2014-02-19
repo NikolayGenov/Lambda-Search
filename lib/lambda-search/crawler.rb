@@ -6,7 +6,7 @@ require 'open_uri_redirections'
 require_relative 'objects/page'
 
 module Lambda_Search
-  DO_NOT_CRAWL_TYPES = %w(.pdf mobi epub .doc .xls .ppt .exe .mp3 .m4v .avi .mpg .rss .xml json .txt .git .zip .md5 .asc .jpg .gif .png jpeg r.gz)
+  DO_NOT_CRAWL_TYPES = %w(.pdf mobi epub .doc .xls .ppt .exe .mp3 .ogg .m4v .avi .mpg .rss .xml json .txt .git .zip .md5 .asc .jpg .gif .png jpeg r.gz)
 
   class Crawler
     def initialize(user_agent:)

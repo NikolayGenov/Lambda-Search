@@ -59,6 +59,8 @@ module Lambda_Search
           @logger.error "Invalid URI link: #{url}"
         rescue OpenURI::HTTPError
           @logger.error "HTTP Error opening: #{url}"
+        rescue ArgumentError => e
+          @logger.error "Argument Error #{e} opening: #{url}"
         rescue SocketError => e
           @logger.error "Socket error #{e}  opening: #{url}"
         rescue SystemCallError => e

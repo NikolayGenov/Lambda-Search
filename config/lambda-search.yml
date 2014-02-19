@@ -1,6 +1,6 @@
 
 engine:
-  max_urls: 100
+  max_urls: 1000
 
 files:
   crawled_file: "crawled.txt"

@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+$LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
+
+require 'yaml'
+require 'lambda-search'
+
+config = YAML::load File.read File.dirname(__FILE__) + '/../config/lambda-search.yml'
+
+
+ranker = Lambda_Search::PageRank.new graph_file: config['files']['graph_file'],
+  page_rank_file: config['files']['page_rank_file']
+
+ranker.save_ranks
+
