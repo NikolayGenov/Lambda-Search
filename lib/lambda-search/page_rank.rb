@@ -43,4 +43,3 @@ module Lambda_Search
     end
   end
 end
-#PageRank.new(graph_file:"graph",page_rank_file: "ranks").save_ranks

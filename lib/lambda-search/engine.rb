@@ -56,7 +56,7 @@ module Lambda_Search
       add_to_crawl seed
       until @urls_to_crawl.empty? or count == @options[:max_urls]
         begin
-          url = @urls_to_crawl[count]
+          url = @urls_to_crawl.first
           if @crawler.crawlable? url and not crawled? url
             count = process_page url, count
             p count

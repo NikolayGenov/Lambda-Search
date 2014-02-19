@@ -13,5 +13,8 @@ files:
 database:
   db_name: "development"
 
+digger:
+  max_results: 20
+
 crawler:
   user_agent: "lambda-crawler"

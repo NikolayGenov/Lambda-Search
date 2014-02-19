@@ -5,8 +5,8 @@ module Lambda_Search
   class WordRank
     include Utilities
 
-    def initialize(search_words)
-      @db = PostgresDirect.new
+    def initialize(search_words, db_name)
+      @db = PostgresDirect.new db_name: db_name
       @db.connect
       @search_words = search_words
 

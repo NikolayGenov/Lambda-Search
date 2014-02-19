@@ -7,8 +7,8 @@ http-equiv="content-type">
 <style>
 body {
   font-family:"helvetica",tahoma,arial,sans-serif;
-  font-size:12px;
-  margin:5;
+  font-size:15px;
+  margin:10;
   padding:5;
 }
 </style>
@@ -16,14 +16,14 @@ body {
 <body>
 <h2>Lambda Search</h2>
 <form method="post" action="/search">
-  <input name="input" value="<%= params[:q]%>" size="30"> <input value="search" type="submit">
+  <input name="input" value="<%= params[:input]%>" size="30"> <input value="search" type="submit">
 </form>
 
 <div><%= "Time to process: #{@time_taken}" unless @results.nil?%></div>
 <div id='results'>
   <ol>
     <% @results.each { |result| %>
-      <li><a href='<%=result.first%>'><%=result.last%></a>    Link:<%=result.first%> <br>
+      <li><a href='<%=result.first%>'><%=result.last%></a>  Link: <%=result.first%> <br>
     <% } unless @results.nil? %>
   </ol>
 </div>

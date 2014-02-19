@@ -16,5 +16,5 @@ engine = Lambda_Search::Engine.new max_urls: config['engine']['max_urls'],
                               user_agent:    config['crawler']['user_agent']
 
 
-engine.process(["http://fmi.ruby.bg/"])
-#TODO add seed
+seed = YAML::load File.read File.dirname(__FILE__) + '/../config/seed.yml'
+engine.process seed

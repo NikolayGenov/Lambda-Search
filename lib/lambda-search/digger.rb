@@ -6,17 +6,18 @@ module Lambda_Search
   class Digger
     include Utilities
 
-    def initialize(titles_file:,page_rank_file:, max_results:)
+    def initialize(titles_file:,page_rank_file:,db_name:, max_results:)
       @page_rank   = load_marshal_hash page_rank_file
       @titles      = load_marshal_hash titles_file
       @max_results = max_results
+      @db_name = db_name
     end
 
     def search(text)
       @search_words = Analyzer::get_words text.split(" ")
       return if @search_words.empty?
 
-      word_rank   = WordRank.new(@search_words).rank
+      word_rank   = WordRank.new(@search_words, @db_name).rank
       rank        = apply_page_rank word_rank
 
       titled_rank = add_titles rank.sort_by { |_,v| v}.reverse
