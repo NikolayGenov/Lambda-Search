@@ -3,4 +3,3 @@ require_relative 'lambda-search/digger'
 require_relative 'lambda-search/crawler'
 require_relative 'lambda-search/page_rank'
 require_relative 'lambda-search/search_interface'
-

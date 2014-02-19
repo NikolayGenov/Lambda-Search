@@ -40,10 +40,3 @@ module Lambda_Search
     end
   end
 end
-
-# page = Page.new url: "www.google.com", content:
-#   ["Wikipedia, the free encyclopedia", "Main Page", "From Wikipedia, the free encyclopedia", "navigation",  "search", "Welcome to ", "Wikipedia", ",", "the ", "free", "encyclopedia", " that ", "anyone can edit", ".", "4,433,942", " articles in ", "English", "Arts", "Biography", "Geography", "History", "Mathematics", "Science", "Society", "Technology", "All portals", "From today's featured article", "Crocodilia", " is an ", "order", " of large, ", "predatory", ", ", "semi-aquatic", "reptiles", ". They appeared in the Late ", "Cretaceous", ", and include ", "true crocodiles", ", ", "alligators", ", ", "caimans", ", and ", "gharials", ". Solidly built animals, they have long flattened snouts, eyes, ears, and nostrils at the top of the head and laterally compressed tails. Their skin is thick and covered in scales;"],
-#   links: ["www.facebook.com"]
-# 
-# an =  Analyzer.new.analyze page
-# p an

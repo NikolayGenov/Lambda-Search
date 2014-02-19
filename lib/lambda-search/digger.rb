@@ -33,7 +33,3 @@ module Lambda_Search
     end
   end
 end
-
-#dig =  Digger.new titles_file: "titles", page_rank_file: "ranks", max_results:20
-#pp dig.search("ruby")
-

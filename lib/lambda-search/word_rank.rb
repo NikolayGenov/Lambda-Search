@@ -9,7 +9,6 @@ module Lambda_Search
       @db = PostgresDirect.new db_name: db_name
       @db.connect
       @search_words = search_words
-
       @word_sql = get_words_sql
     end
 

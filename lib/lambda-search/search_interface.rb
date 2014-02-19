@@ -21,6 +21,5 @@ module Lambda_Search
 
     def display_results(input)
     end
-
   end
 end

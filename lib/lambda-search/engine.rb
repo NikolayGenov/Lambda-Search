@@ -31,13 +31,8 @@ module Lambda_Search
     end
 
     def kill_DB
-      # @db.drop_table
+      #@db.drop_table #if you want to delete the current table
       @db.disconnect
-    end
-
-    #TODO - remove
-    def get_data
-      @db.query{|row| printf("%d \n", row['id'] )}
     end
 
     def crawled?(url)
@@ -59,7 +54,6 @@ module Lambda_Search
           url = @urls_to_crawl.first
           if @crawler.crawlable? url and not crawled? url
             count = process_page url, count
-            p count
           end
         rescue URI::InvalidURIError
           @logger.error "Invalid URI link: #{url}"
@@ -78,7 +72,7 @@ module Lambda_Search
       end
     ensure
       write_links_to_files
-      # kill_DB
+      kill_DB
     end
 
     def add_to_crawl(seed)
@@ -104,11 +98,4 @@ module Lambda_Search
       end
     end
   end
-
-#en = Engine.new crawled_file: "crawled.txt", to_crawl_file: "to_crawl.txt", logger_file: "logfile.log",
- #graph_file: "graph",titles_file: "titles",  max_urls: 1000 , db_name: "development", user_agent: "lambda-crawler"
- #en.process("http://en.wikipedia.com/")
-# en.process("http://google.com/")
-#en.process(["http://fmi.ruby.bg/"])
-# en.get_data
 end

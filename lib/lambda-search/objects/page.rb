@@ -6,7 +6,6 @@ module Lambda_Search
       def initialize(url:, title: nil, content: nil, links: nil)
         @content, @url, @title, @links =  content ,url, title, links
       end
-
     end
   end
 end
