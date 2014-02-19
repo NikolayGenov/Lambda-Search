@@ -56,7 +56,3 @@ module Lambda_Search
     end
   end
 end
-#crawler =  Crawler.new
-# TEST crawler.is_valid_url?("/wiki/Wikipedia:Please_clarify")
-#page = crawler.crawl("http://en.wikipedia.com/")
-#p page.content
