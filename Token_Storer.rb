@@ -1,9 +1,12 @@
 require 'pg'
 
 class PostgresDirect
+ def initialize(db_name:)
+   @db_name = db_name
+ end
+
   def connect
-    @conn = PG.connect(
-      :dbname => 'Lam')
+    @conn = PG.connect(:dbname => @db_name)
   end
 
   def create_table

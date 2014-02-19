@@ -9,7 +9,7 @@ class Engine
     @options = options
     @crawler = Crawler.new
     @analyzer = Analyzer.new
-    @db = PostgresDirect.new
+    @db = PostgresDirect.new db_name: @options[:db_name]
     @logger = Logger.new @options[:logger_file]
     load_data
     init_DB
@@ -24,13 +24,13 @@ class Engine
 
   def init_DB
     @db.connect
-    #@db.create_table
+    @db.create_table
     @db.prepare_insert_statement
   end
 
   def kill_DB
     # @db.drop_table
-  #  @db.disconnect
+    @db.disconnect
   end
 
   #TODO - remove
@@ -76,7 +76,7 @@ class Engine
     end
   ensure
     write_links_to_files
-   # kill_DB
+    # kill_DB
   end
 
   def add_to_crawl(seed)
@@ -104,8 +104,8 @@ class Engine
 end
 
 en = Engine.new crawled_file: "crawled.txt", to_crawl_file: "to_crawl.txt", logger_file: "logfile.log",
-  graph_file: "graph",titles_file: "titles",  max_urls: 1000
+  graph_file: "graph",titles_file: "titles",  max_urls: 1000 , db_name: "development"
 # en.process("http://en.wikipedia.com/")
 # en.process("http://google.com/")
 en.process(["http://fmi.ruby.bg/"])
-  en.get_data
+# en.get_data
