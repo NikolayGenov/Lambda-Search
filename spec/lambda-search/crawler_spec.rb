@@ -1,11 +1,12 @@
 require 'spec_helper'
-
 describe Lambda_Search::Crawler do
 
   let :crawler do
     Lambda_Search::Crawler.new user_agent: "lambda-search"
   end
 
+  let(:link) { "http://somelink.com" }
+  let(:simple_link) { "http://link.com" }
   let :content  do <<-HTML
 <html>
   <head>
@@ -44,6 +45,7 @@ describe Lambda_Search::Crawler do
   end
 
   describe 'crawlable?' do
+    WebMock.allow_net_connect!
     def crawlable(url)
       crawler.crawlable?(url).should eq true
     end
@@ -105,8 +107,6 @@ describe Lambda_Search::Crawler do
   end
 
   describe 'get_links' do
-    let(:link) { "http://somelink.com" }
-    let(:simple_link) { "http://link.com" }
     let(:simple_link_2) { "http://otherlink.com" }
     let(:sublink) { "http://link.com/other_page" }
     let :multi_link_content  do <<-HTML
@@ -162,9 +162,16 @@ describe Lambda_Search::Crawler do
   end
 
   describe 'crawl' do
-
-    it 'can crawl simple page' do
-      #TODO add server mock
+    before(:each) do
+      stub_request(:any, link).to_return(:status => 200, :body => content )
     end
+    it 'can crawl simple page' do
+      crawler.crawl(link) do |page|
+        page.should equal Lambda_Search::Objects::Page.new url: link,title: 'Some Title',
+          content: ["Some Title","Some text with ", "link"], links: [simple_link]
+      end
+    end
+
+    #TODO add more
   end
 end
