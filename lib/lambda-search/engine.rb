@@ -8,11 +8,11 @@ module Lambda_Search
   class Engine
     include Utilities
     def initialize(options = {})
-      @options = options
-      @crawler = Crawler.new user_agent: @options[:user_agent]
+      @options  = options
+      @crawler  = Crawler.new user_agent: @options[:user_agent]
       @analyzer = Analyzer.new
-      @db = Database.new db_name: @options[:db_name]
-      @logger = Logger.new @options[:logger_file]
+      @db       = Database.new db_name: @options[:db_name]
+      @logger   = Logger.new @options[:logger_file]
       load_data
       init_DB
     end
@@ -30,8 +30,11 @@ module Lambda_Search
       @db.prepare_insert_statement
     end
 
-    def kill_DB
-      #@db.drop_table #if you want to delete the current table
+    def drop_table_DB
+      @db.drop_table #if you want to delete the current table
+    end
+
+    def disconnect_DB
       @db.disconnect
     end
 
@@ -74,7 +77,7 @@ module Lambda_Search
       end
     ensure
       write_links_to_files
-      kill_DB
+      disconnect_DB
     end
 
     def add_to_crawl(seed)
@@ -90,7 +93,7 @@ module Lambda_Search
 
     def save_additional_url_data(url, page)
       @titles[url] = page.title
-      @graph[url] = page.links #used by PageRank
+      @graph[url]  = page.links #used by PageRank
       @urls_to_crawl += page.links
     end
 

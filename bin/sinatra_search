@@ -13,8 +13,9 @@ end
 
 post '/search' do
   digger = Lambda_Search::Digger.new  page_rank_file: config['files']['page_rank_file'],
-    titles_file: config['files']['titles_file'], max_results: config['digger']['max_results'],
-    db_name: config['database']['db_name']
+                                      titles_file:    config['files']['titles_file'],
+                                      max_results:    config['digger']['max_results'],
+                                      db_name:        config['database']['db_name']
   time_start = Time.now
   @results = digger.search(params[:input])
   time_end = Time.now

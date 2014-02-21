@@ -2,6 +2,7 @@ require 'spec_helper'
 describe Lambda_Search::WordRank do
 
   let (:database_name) { "test" }
+
   before(:all) do
     @db =  Lambda_Search::Database.new db_name: "test"
     @db.connect
@@ -15,6 +16,7 @@ describe Lambda_Search::WordRank do
     @db.add_word("movie", "other_page"   , 100)
     @db.add_word("short" ,"link_to_page" , 0  )
   end
+
   after(:all) do
     @db.drop_table
   end
