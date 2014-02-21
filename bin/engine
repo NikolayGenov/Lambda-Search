@@ -15,6 +15,5 @@ engine = Lambda_Search::Engine.new max_urls:      config['engine']['max_urls'],
                                    db_name:       config['database']['db_name'],
                                    user_agent:    config['crawler']['user_agent']
 
-
 seed = YAML::load File.read File.dirname(__FILE__) + '/../config/seed.yml'
 engine.process seed

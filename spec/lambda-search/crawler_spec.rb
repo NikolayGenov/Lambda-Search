@@ -18,6 +18,7 @@ describe Lambda_Search::Crawler do
 </html>
   HTML
   end
+
   describe 'is_valid_url?' do
     def valid(url)
       crawler.is_valid_url?(url).should eq true
@@ -166,7 +167,7 @@ describe Lambda_Search::Crawler do
       stub_request(:any, link).to_return(:status => 200, :body => content )
     end
     it 'can crawl simple page' do
-      page = crawler.crawl(link) 
+      page = crawler.crawl(link)
       page.url.should eq link
       page.title.should eq 'Some Title'
       page.content.should eq  ["Some Title","Some text with ", "link"]

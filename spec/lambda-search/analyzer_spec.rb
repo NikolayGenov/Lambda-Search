@@ -6,8 +6,9 @@ describe Lambda_Search::Analyzer do
   end
 
   let :content_massive do
-    ["Translations ", " ", "Millions of people use Ubuntu around the globe. They speak hundreds of different languages and it’s our mission to
-   make Ubuntu as easily accessible to everyone as possible." ]
+    ["Translations ", " ", "Millions of people use Ubuntu around the globe.
+      They speak hundreds of different languages and it’s our mission to
+      make Ubuntu as easily accessible to everyone as possible." ]
   end
 
   describe 'stem words' do
@@ -41,7 +42,6 @@ describe Lambda_Search::Analyzer do
   end
 
   describe 'extract_words' do
-
     let :extracted_words do
       ["translations", "millions", "of", "people",
        "use", "ubuntu", "around", "the", "globe", "they", "speak",
@@ -83,6 +83,7 @@ describe Lambda_Search::Analyzer do
     let :page do
       Lambda_Search::Objects::Page.new url: "http://fmi.ruby.bg", title:"Ruby Programing", content: ["words","rubylang"]
     end
+
     it 'can analyze simple page' do
       token =  page_analyzer.analyze(page)
       token[0].word.should eq "word"

@@ -7,11 +7,11 @@ module Lambda_Search
     DAMPING_FACTOR = 0.8
     NUMBER_LOOPS = 10
 
-    def initialize(graph_file:,page_rank_file:)
-      @graph = Marshal.load File.read graph_file
-      @number_pages = @graph.size
+    def initialize(graph_file:, page_rank_file:)
+      @graph          = Marshal.load File.read graph_file
+      @number_pages   = @graph.size
       @page_rank_file = page_rank_file
-      @ranks = {}
+      @ranks          = {}
       init_ranks
     end
 

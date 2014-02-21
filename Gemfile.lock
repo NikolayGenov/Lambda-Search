@@ -33,6 +33,7 @@ GEM
     stopwords (0.2)
     tilt (1.4.1)
     unicode (0.4.4.1)
+    watchr (0.7)
     webmock (1.17.3)
       addressable (>= 2.2.7)
       crack (>= 0.3.2)
@@ -52,4 +53,5 @@ DEPENDENCIES
   stemmer
   stopwords
   unicode
+  watchr
   webmock
