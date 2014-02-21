@@ -1,7 +1,7 @@
 require 'pg'
 
 module Lambda_Search
-  class PostgresDirect
+  class Database
     def initialize(db_name:)
       @db_name = db_name
     end

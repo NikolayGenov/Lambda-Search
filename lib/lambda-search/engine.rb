@@ -11,7 +11,7 @@ module Lambda_Search
       @options = options
       @crawler = Crawler.new user_agent: @options[:user_agent]
       @analyzer = Analyzer.new
-      @db = PostgresDirect.new db_name: @options[:db_name]
+      @db = Database.new db_name: @options[:db_name]
       @logger = Logger.new @options[:logger_file]
       load_data
       init_DB

@@ -6,7 +6,7 @@ module Lambda_Search
     include Utilities
 
     def initialize(search_words, db_name)
-      @db = PostgresDirect.new db_name: db_name
+      @db = Database.new db_name: db_name
       @db.connect
       @search_words = search_words
       @word_sql = get_words_sql
@@ -18,7 +18,6 @@ module Lambda_Search
       rank
     end
 
-
     def merge_rankings(*rankings)
       rank = {}
 
@@ -26,7 +25,6 @@ module Lambda_Search
 
       rank
     end
-
 
     def frequency_ranking
       list, rank = [], {}
