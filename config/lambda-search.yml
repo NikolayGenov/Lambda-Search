@@ -1,14 +1,13 @@
-
 engine:
-  max_urls: 1
+  max_urls: 50
 
 files:
-  crawled_file: "crawled.txt"
-  to_crawl_file: "to_crawl.txt"
-  graph_file: "graph"
-  titles_file: "titles"
+  crawled_file:   "crawled.txt"
+  to_crawl_file:  "to_crawl.txt"
+  graph_file:     "graph"
+  titles_file:    "titles"
   page_rank_file: "ranks"
-  logger_file: "logfile.log"
+  logger_file:    "logfile.log"
 
 database:
   db_name: "development"
