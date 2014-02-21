@@ -166,10 +166,12 @@ describe Lambda_Search::Crawler do
       stub_request(:any, link).to_return(:status => 200, :body => content )
     end
     it 'can crawl simple page' do
-      crawler.crawl(link) do |page|
-        page.should equal Lambda_Search::Objects::Page.new url: link,title: 'Some Title',
-          content: ["Some Title","Some text with ", "link"], links: [simple_link]
-      end
+      page = crawler.crawl(link) 
+      page.url.should eq link
+      page.title.should eq 'Some Title'
+      page.content.should eq  ["Some Title","Some text with ", "link"]
+      page.links.should eq [simple_link]
+      page.should be_an_instance_of Lambda_Search::Objects::Page
     end
   end
 end

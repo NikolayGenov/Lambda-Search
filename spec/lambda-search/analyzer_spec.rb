@@ -79,10 +79,20 @@ describe Lambda_Search::Analyzer do
   end
 
   describe 'analyze' do
-    #TODO add page
+    let (:page_analyzer) { Lambda_Search::Analyzer.new }
+    let :page do
+      Lambda_Search::Objects::Page.new url: "http://fmi.ruby.bg", title:"Ruby Programing", content: ["words","rubylang"]
+    end
+    it 'can analyze simple page' do
+      token =  page_analyzer.analyze(page)
+      token[0].word.should eq "word"
+      token[0].link.should eq "http://fmi.ruby.bg"
+      token[0].position.should eq 0
+      token[1].word.should eq "rubylang"
+      token[1].link.should eq "http://fmi.ruby.bg"
+      token[1].position.should eq 1
+      token[0].should be_an_instance_of Lambda_Search::Objects::Token
+      token.should be_an_instance_of Array
+    end
   end
-
-
 end
-
-
