@@ -55,7 +55,7 @@ module Lambda_Search
       search_data.each { |item| hash[item['url']] = [] }
       search_data.each { |item| hash[item['url']] << item['word'] }
 
-      hash.each { |item| list <<  { :url => item.first , :ratio => get_ratio(item) } }
+      hash.each { |item| list << { :url => item.first, :ratio => get_ratio(item) } }
 
       list.sort_by! { |hsh| hsh[:ratio]}.reverse
       list.each { |item| rank[item[:url]] = list.first[:ratio] / item[:ratio].to_f }
