@@ -1,5 +1,6 @@
 module Lambda_Search
   module Utilities
+
     def load_marshal_hash(file_name)
       file = File.read(file_name)
       file.empty? ? {} : Marshal.load(file)

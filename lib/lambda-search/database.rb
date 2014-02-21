@@ -2,6 +2,7 @@ require 'pg'
 
 module Lambda_Search
   class Database
+
     def initialize(db_name:)
       @db_name = db_name
     end
@@ -11,7 +12,9 @@ module Lambda_Search
     end
 
     def create_table
-      @conn.exec("CREATE TABLE words (id serial NOT NULL, word character varying(255), url character varying(255),position integer, CONSTRAINT words_pkey PRIMARY KEY (id)) WITH (OIDS=FALSE);");
+      @conn.exec("CREATE TABLE words (id serial NOT NULL, word character varying(60),
+                 url character varying(255), position integer, CONSTRAINT words_pkey
+                 PRIMARY KEY (id)) WITH (OIDS=FALSE);");
     end
 
     def table_exist?
@@ -51,6 +54,7 @@ module Lambda_Search
         end
       end
     end
+
     def disconnect
       @conn.close
     end

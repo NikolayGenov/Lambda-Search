@@ -10,7 +10,7 @@ module Lambda_Search
       @page_rank   = load_marshal_hash page_rank_file
       @titles      = load_marshal_hash titles_file
       @max_results = max_results
-      @db_name = db_name
+      @db_name     = db_name
     end
 
     def search(text)

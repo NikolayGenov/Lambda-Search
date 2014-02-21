@@ -1,26 +1,29 @@
 require 'spec_helper'
 describe Lambda_Search::PageRank do
 
+  let (:graph_path) { "./spec/lambda-search/graph_test" }
+  let (:rank_path)  { "./spec/lambda-search/rank_test" }
+
   let :ranker do
-    Lambda_Search::PageRank.new graph_file: "graph_test", page_rank_file:  "rank_test"
+    Lambda_Search::PageRank.new graph_file: graph_path, page_rank_file: rank_path
   end
+
   let :graph_hash do
-    {'http://page.com/sub/urank/arsenic.html'=> ['http://page.com/sub/urank/nickel.html'],
-     'http://page.com/sub/urank/zinc.html'=> ['http://page.com/sub/urank/nickel.html', 'http://page.com/sub/urank/arsenic.html'],
-     'http://page.com/sub/urank/hummus.html'=> [],
-     'http://page.com/sub/urank/nickel.html'=> ['http://page.com/sub/urank/kathleen.html'],
-     'http://page.com/sub/urank/index.html'=> ['http://page.com/sub/urank/hummus.html', 'http://page.com/sub/urank/arsenic.html', 'http://page.com/sub/urank/kathleen.html', 'http://page.com/sub/urank/nickel.html', 'http://page.com/sub/urank/zinc.html'],
-     'http://page.com/sub/urank/kathleen.html'=> []}
+    {'http://page.com/sub/urank/arsenic.html'  => ['http://page.com/sub/urank/nickel.html'],
+     'http://page.com/sub/urank/zinc.html'     => ['http://page.com/sub/urank/nickel.html', 'http://page.com/sub/urank/arsenic.html'],
+     'http://page.com/sub/urank/hummus.html'   => [],
+     'http://page.com/sub/urank/nickel.html'   => ['http://page.com/sub/urank/kathleen.html'],
+     'http://page.com/sub/urank/index.html'    => ['http://page.com/sub/urank/hummus.html', 'http://page.com/sub/urank/arsenic.html', 'http://page.com/sub/urank/kathleen.html', 'http://page.com/sub/urank/nickel.html', 'http://page.com/sub/urank/zinc.html'],
+     'http://page.com/sub/urank/kathleen.html' => []}
   end
 
   let :hash_ranks do
-    {"http://page.com/sub/urank/arsenic.html" => 0.12666666666666665,
-     "http://page.com/sub/urank/hummus.html" => 0.06,
-     "http://page.com/sub/urank/index.html" => 0.033333333333333326,
+    {"http://page.com/sub/urank/arsenic.html"  => 0.12666666666666665,
+     "http://page.com/sub/urank/hummus.html"   => 0.06,
+     "http://page.com/sub/urank/index.html"    => 0.033333333333333326,
      "http://page.com/sub/urank/kathleen.html" => 0.19333333333333333,
-     "http://page.com/sub/urank/nickel.html" => 0.26,
-     "http://page.com/sub/urank/zinc.html" => 0.06,
-    }
+     "http://page.com/sub/urank/nickel.html"   => 0.26,
+     "http://page.com/sub/urank/zinc.html"     => 0.06, }
   end
 
   let :valid_ranks do
@@ -80,7 +83,7 @@ describe Lambda_Search::PageRank do
   describe 'save ranks to file' do
     it 'can save file to file with marshal dump' do
       ranker.save_ranks
-      hashes = ranker.load_marshal_hash("rank_test")
+      hashes = ranker.load_marshal_hash(rank_path)
       hashes.should eq valid_ranks
     end
   end

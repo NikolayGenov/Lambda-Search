@@ -15,6 +15,7 @@ module Lambda_Search
     def rank
       rank = merge_rankings(frequency_ranking, location_ranking, diff_count_ranking)
       @db.disconnect
+
       rank
     end
 
@@ -68,6 +69,7 @@ module Lambda_Search
       max_value  = values.max + 1
       sum_values = values.reduce(&:+)
       ratio      = (sum_values - max_value * @search_words.size.to_f) / max_value
+
       ratio.abs
     end
 

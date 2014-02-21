@@ -7,6 +7,7 @@ require_relative 'utilities/utilities'
 module Lambda_Search
   class Engine
     include Utilities
+
     def initialize(options = {})
       @options  = options
       @crawler  = Crawler.new user_agent: @options[:user_agent]
@@ -92,8 +93,8 @@ module Lambda_Search
     end
 
     def save_additional_url_data(url, page)
-      @titles[url] = page.title
-      @graph[url]  = page.links #used by PageRank
+      @titles[url]    = page.title
+      @graph[url]     = page.links #used by PageRank
       @urls_to_crawl += page.links
     end
 

@@ -2,6 +2,7 @@ require_relative 'digger'
 
 module Lambda_Search
   class Search_Interface
+
     def initialize(page_rank_file:, titles_file:,max_results:, db_name:)
       @digger = Digger.new page_rank_file: page_rank_file,
         titles_file: titles_file, max_results: max_results, db_name: db_name

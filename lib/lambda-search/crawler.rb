@@ -6,9 +6,11 @@ require 'open_uri_redirections'
 require_relative 'objects/page'
 
 module Lambda_Search
-  DO_NOT_CRAWL_TYPES = %w(.pdf mobi epub .doc .xls .ppt .exe .mp3 .ogg .m4v .avi .mpg .rss .xml json .txt .git .zip .md5 .asc .jpg .gif .png jpeg r.gz)
+  DO_NOT_CRAWL_TYPES = %w(.pdf mobi epub .doc .xls .ppt .exe .mp3 .ogg .m4v .avi .mpg
+  .rss .xml json .txt .git .zip .md5 .asc .jpg .gif .png jpeg r.gz)
 
   class Crawler
+
     def initialize(user_agent:)
       @user_agent = user_agent
       @robot      = Robots.new @user_agent
@@ -44,7 +46,9 @@ module Lambda_Search
     end
 
     def crawlable? (url)
-      return false if DO_NOT_CRAWL_TYPES.include? url[(url.size-4)..url.size] or url.include? '?' or url.include? '/cgi-bin/' or url.include? '&amp;' or url[0..9] == 'javascript' or url[0..5] == 'mailto' or url.include? '#'
+      return false if DO_NOT_CRAWL_TYPES.include? url[(url.size-4)..url.size] or
+        url.include? '?' or url.include? '/cgi-bin/' or url.include? '&amp;' or
+        url[0..9] == 'javascript' or url[0..5] == 'mailto' or url.include? '#'
       is_valid_url?(url) and @robot.allowed? url
     end
 
