@@ -171,7 +171,5 @@ describe Lambda_Search::Crawler do
           content: ["Some Title","Some text with ", "link"], links: [simple_link]
       end
     end
-
-    #TODO add more
   end
 end
